@@ -2,6 +2,7 @@ import discord
 from database import Database
 from division.service.distribution_status import update_distribut_status
 from item_db import get_url
+MAX_VALUES = 5
 
 
 class PartitionOption(discord.SelectOption):
@@ -97,15 +98,17 @@ class CompleteView(discord.ui.View):
 def complete(member_ids):
     with Database() as db:
         divisions = db.find_divisions_by_member_ids(member_ids)
-    options = [
-        CompleteOption(id=str(division.id), item=division.item, members=division.get_members)
-        for division in divisions
-    ]
+    options = []
+    for i, division in enumerate(divisions):
+        if i >= 25:
+            break
+        option = CompleteOption(id=str(division.id), item=division.item, members=division.get_members)
+        options.append(option)
 
     if len(options) == 0:
         return None
 
-    menu = CompleteMenu(options=options, max_values=len(options))
+    menu = CompleteMenu(options=options, max_values=len(options) if len(options) < MAX_VALUES else MAX_VALUES)
     view = CompleteView(menu)
 
     return view

@@ -1,6 +1,7 @@
 import discord
 from database import Database
 from division.service.distribution_status import update_distribut_status
+MAX_VALUES = 5
 
 
 class DeleteOption(discord.SelectOption):
@@ -31,15 +32,17 @@ def delete(member_ids):
     with Database() as db:
         divisions = db.find_divisions_by_member_ids(member_ids)
 
-    options = [
-        DeleteOption(id=str(division.id), item=division.item, members=division.get_members)
-        for division in divisions
-    ]
+    options = []
+    for i, division in enumerate(divisions):
+        if i >= 25:
+            break
+        option = DeleteOption(id=str(division.id), item=division.item, members=division.get_members)
+        options.append(option)
 
     if len(options) == 0:
         return None
 
-    menu = DeleteMenu(options=options, max_values=len(options))
+    menu = DeleteMenu(options=options, max_values=len(options) if len(options) < MAX_VALUES else MAX_VALUES)
     view = DeleteView(menu)
 
     return view
