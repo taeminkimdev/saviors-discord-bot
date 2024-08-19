@@ -1,4 +1,5 @@
 from pymysqlpool.pool import Pool
+from pymysql.cursors import Cursor
 from division.dto import Division, Member
 from typing import List
 from config import mysql
@@ -7,7 +8,8 @@ from config import mysql
 pool = Pool(host=mysql.host,
             user=mysql.user,
             password=mysql.password,
-            db=mysql.db)
+            db=mysql.db,
+            cursorclass=Cursor)
 pool.init()
 
 
