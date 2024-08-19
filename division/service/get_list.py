@@ -17,6 +17,8 @@ def get_division(member_ids):
     file = discord.File(f'static/{img_url}')
     embed.set_thumbnail(url=f'attachment://{file.filename}')
     for i, division in enumerate(divisions):
+        if i >= 25:
+            break
         embed.add_field(name=f'[{i + 1}] {division.item} - {division.created_at.strftime("%m/%d")}', value=division.get_members_string, inline=False)
 
     return embed, file

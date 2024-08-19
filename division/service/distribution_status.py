@@ -14,6 +14,8 @@ async def update_distribut_status(client: discord.Client):
         embed.description = '분배할 아이템이 없습니다'
 
     for i, division in enumerate(divisions):
+        if i >= 25:
+            break
         embed.add_field(name=f'[{i + 1}] {division.item} - {division.created_at.strftime("%m/%d")}',
                         value=division.get_members_string, inline=False)
 
