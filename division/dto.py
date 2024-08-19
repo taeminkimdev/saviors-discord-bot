@@ -60,4 +60,7 @@ class Division:
             if len(self.members) != i + 1:
                 member_string += ', '
 
+        if len(member_string) > 40:
+            member_string = f'{member_string[:40]}...'
+
         return member_string
