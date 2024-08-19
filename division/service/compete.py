@@ -2,6 +2,8 @@ import discord
 from database import Database
 from division.service.distribution_status import update_distribut_status
 from item_db import get_url
+import logging
+
 MAX_VALUES = 5
 
 
@@ -21,6 +23,9 @@ class PartitionMenu(discord.ui.Select):
         member_ids = [int(value.split('/')[1]) for value in self.values]
         with Database() as db:
             divided = db.update_partition_complete(division_ids, member_ids)
+
+        saviors_logger = logging.getLogger('saviors')
+        saviors_logger.info(msg=f'[분배 완료] - {interaction.user.id}/{interaction.user.name} / division_ids : {division_ids} / member_ids : {member_ids}')
 
         if len(divided) > 0:
             embed = discord.Embed(title='분배 완료', color=0x8fce00)

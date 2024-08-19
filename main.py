@@ -2,12 +2,38 @@ import discord
 import os
 from discord.commands.options import Option
 from discord.ext import commands
-
 from database import Database
 from config import setting
 from util import convert_members, convert_external_members
 from division.service import compete, delete, get_list, input
 from division.service.distribution_status import update_distribut_status
+
+
+import logging
+from config import log
+from logging.handlers import TimedRotatingFileHandler
+
+
+def set_handler(logger, level):
+    filename = log.INFO_LOG_FILENAME
+    if level == logging.WARNING:
+        filename = log.WARNING_LOG_FILENAME
+
+    handler = TimedRotatingFileHandler(filename=filename, when='d', interval=1, backupCount=90, encoding='utf-8')
+    handler.suffix = log.SUFFIX
+    formatter = logging.Formatter(log.LOG_FORMAT)
+    handler.setFormatter(formatter)
+    handler.setLevel(level)
+
+    logger.addHandler(handler)
+
+
+saviors_logger = logging.getLogger('saviors')
+saviors_logger.setLevel(logging.INFO)
+
+set_handler(saviors_logger, logging.INFO)
+set_handler(saviors_logger, logging.WARNING)
+
 
 intents = discord.Intents.all()
 
@@ -62,6 +88,12 @@ async def on_message(message: discord.Message):
         file = discord.File(f'static/kkiyathou.png')
         await message.channel.send(file=file)
 
+    elif '렛렝' == message.content:
+        await message.channel.send("'렛렝'님은 '에이렛'님의 부캐릭터 '소생의찬가'의 전 닉네임이에요. 정말 독특하고 창의적인 닉네임이네요!")
+
+    elif '위하임' == message.content:
+        await message.channel.send("我是魏海姆!")
+
 division = bot.create_group(name='분배', description='분배합니다')
 
 
@@ -80,6 +112,8 @@ async def on_application_command_error(ctx: discord.ApplicationContext, error: d
     if isinstance(error, CommandNotValidLocation):
         await ctx.respond(f"'{ctx.channel.name}' 채널은 분배 명령어를 사용할 수 없는 채널입니다")
     else:
+        msg = f'{ctx.command.name}'
+        saviors_logger.exception(msg=msg, exc_info=error)
         raise error  # Here we raise other errors to ensure they aren't ignored
 
 
@@ -136,6 +170,7 @@ async def input_division(ctx: discord.Interaction,
     member_ids = convert_members(members, ctx.user.id)
     embed, file = input.input_division(item, member_ids + external_member_ids)
 
+    saviors_logger.info(msg=f'[분배 등록] - {ctx.user.id}/{ctx.user.name}')
     await ctx.respond(embed=embed, file=file, ephemeral=True, delete_after=10)
     await update_distribut_status(bot)
 
