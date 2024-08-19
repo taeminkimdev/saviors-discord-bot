@@ -1,6 +1,7 @@
 import discord
 import os
 from discord.commands.options import Option
+from discord.ext import commands
 
 from database import Database
 from config import setting
@@ -64,19 +65,19 @@ async def on_message(message: discord.Message):
 division = bot.create_group(name='분배', description='분배합니다')
 
 
-class CommandNotValidLocation(Exception):
+class CommandNotValidLocation(commands.CommandError):
     pass
 
 
 @division.before_invoke
 async def check_valid_channel(ctx: discord.commands.context.ApplicationContext):
     if ctx.channel_id != setting.channel_id:
-        raise discord.ApplicationCommandInvokeError(e=CommandNotValidLocation())
+        raise CommandNotValidLocation
 
 
 @bot.event
-async def on_application_command_error(ctx: discord.ApplicationContext, error: discord.ApplicationCommandInvokeError):
-    if isinstance(error, discord.ApplicationCommandInvokeError):
+async def on_application_command_error(ctx: discord.ApplicationContext, error: discord.DiscordException):
+    if isinstance(error, CommandNotValidLocation):
         await ctx.respond(f"'{ctx.channel.name}' 채널은 분배 명령어를 사용할 수 없는 채널입니다")
     else:
         raise error  # Here we raise other errors to ensure they aren't ignored
