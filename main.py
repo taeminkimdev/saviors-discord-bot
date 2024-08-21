@@ -103,7 +103,7 @@ class CommandNotValidLocation(commands.CommandError):
 
 @division.before_invoke
 async def check_valid_channel(ctx: discord.commands.context.ApplicationContext):
-    if ctx.command.name == '초기화':
+    if ctx.selected_options[0]['name'] == '초기화':
         pass
 
     elif ctx.channel_id != setting.channel_id:
@@ -124,7 +124,11 @@ async def on_application_command_error(ctx: discord.ApplicationContext, error: d
 async def division_init(ctx: discord.commands.context.ApplicationContext):
     with open('channel_id', 'w') as f:
         f.write(str(ctx.channel_id))
-    os.remove('distribute_message_id')
+
+    try:
+        os.remove('distribute_message_id')
+    except FileNotFoundError:
+        pass
 
     setting.channel_id = ctx.channel_id
     await ctx.respond(f"'{ctx.channel.name}' 채널을 분배 채널로 지정합니다")
