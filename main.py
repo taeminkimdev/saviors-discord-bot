@@ -103,7 +103,10 @@ class CommandNotValidLocation(commands.CommandError):
 
 @division.before_invoke
 async def check_valid_channel(ctx: discord.commands.context.ApplicationContext):
-    if ctx.channel_id != setting.channel_id:
+    if ctx.command.name == '초기화':
+        pass
+
+    elif ctx.channel_id != setting.channel_id:
         raise CommandNotValidLocation
 
 
