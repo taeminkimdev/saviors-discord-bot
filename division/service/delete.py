@@ -1,6 +1,7 @@
 import discord
 from database import Database
 from division.service.distribution_status import update_distribut_status
+from item_db import get_emoji
 import logging
 
 MAX_VALUES = 5
@@ -8,7 +9,8 @@ MAX_VALUES = 5
 
 class DeleteOption(discord.SelectOption):
     def __init__(self, id, item, members):
-        super().__init__(value=id, label=item, description=members)
+        emoji = get_emoji(item)
+        super().__init__(value=id, label=item, description=members, emoji=emoji)
 
 
 class DeleteMenu(discord.ui.Select):

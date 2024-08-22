@@ -1,6 +1,7 @@
 from database import Database
 import discord
 from config import setting
+from item_db import get_emoji
 
 
 async def update_distribut_status(client: discord.Client):
@@ -8,7 +9,7 @@ async def update_distribut_status(client: discord.Client):
 
     with Database() as db:
         divisions = db.find_divisions_by_member_ids([])
-    embed = discord.Embed(title='📜 Saviors 미분배 목록', description='', color=0x62c1cc)
+    embed = discord.Embed(title='⠀⠀⠀⠀⠀⠀📜 Saviors 미분배 목록⠀⠀⠀⠀⠀⠀', description='', color=0x62c1cc)
 
     if len(divisions) == 0:
         embed.description = '분배할 아이템이 없습니다'
@@ -16,7 +17,8 @@ async def update_distribut_status(client: discord.Client):
     for i, division in enumerate(divisions):
         if i >= 25:
             break
-        embed.add_field(name=f'[{i + 1}] {division.item} - {division.created_at.strftime("%m/%d")}',
+        emoji = get_emoji(division.item)
+        embed.add_field(name=f'{emoji} {division.item} - {division.created_at.strftime("%m/%d")}',
                         value=division.get_members_string, inline=False)
 
     try:

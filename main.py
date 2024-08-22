@@ -4,6 +4,7 @@ from discord.commands.options import Option
 from discord.ext import commands
 from database import Database
 from config import setting
+from item_db import emoji_db
 from util import convert_members, convert_external_members
 from division.service import compete, delete, get_list, input
 from division.service.distribution_status import update_distribut_status
@@ -37,7 +38,7 @@ set_handler(saviors_logger, logging.WARNING)
 
 intents = discord.Intents.all()
 
-bot = discord.Bot(intents=intents, activity=discord.Game(name='여신님을 숭배'))
+bot = discord.Bot(intents=intents, activity=discord.Game(name='섬멸자 여신님을 숭배'))
 
 
 @bot.event
@@ -89,7 +90,7 @@ async def on_message(message: discord.Message):
         await message.channel.send(file=file)
 
     elif '렛렝' == message.content:
-        await message.channel.send("'렛렝'님은 '에이렛'님의 부캐릭터 '소생의찬가'의 전 닉네임이에요. 정말 독특하고 창의적인 닉네임이네요!")
+        await message.channel.send("'렛렝'님은 '에이렛'님의 부캐릭터 '소생의찬가'의 전 닉네임이에요. 정말 독특하고 멋진 닉네임이네요!")
 
     elif '위하임' == message.content:
         await message.channel.send("我是魏海姆!")
@@ -113,7 +114,7 @@ async def check_valid_channel(ctx: discord.commands.context.ApplicationContext):
 @bot.event
 async def on_application_command_error(ctx: discord.ApplicationContext, error: discord.DiscordException):
     if isinstance(error, CommandNotValidLocation):
-        await ctx.respond(f"'{ctx.channel.name}' 채널은 분배 명령어를 사용할 수 없는 채널입니다")
+        await ctx.respond(f"'{ctx.channel.name}' 채널은 분배 명령어를 사용할 수 없는 채널입니다", ephemeral=True, delete_after=10)
     else:
         msg = f'{ctx.command.name}'
         saviors_logger.exception(msg=msg, exc_info=error)
@@ -136,40 +137,40 @@ async def division_init(ctx: discord.commands.context.ApplicationContext):
 
 @division.command(name='목록', description='내가 받을 수 있는 분배 목록을 검색합니다')
 async def get_division_list(ctx: discord.commands.context.ApplicationContext,
-                            members: Option(str, name='필터유저', description='함께 검색하고 싶은 유저를 멘션해주세요 ex. @찰봉@찰봇@붕괴의파동') = ''):
+                            members: Option(str, name='필터유저', description='함께 검색하고 싶은 유저를 멘션해주세요 ex. @꼬장@찰봉@에이렛') = ''):
     member_ids = convert_members(members, ctx.user.id)
-    embed, file = get_list.get_division(member_ids)
+    embed = get_list.get_division(member_ids)
 
-    await ctx.respond(embed=embed, file=file, ephemeral=True, delete_after=60)
+    await ctx.respond(embed=embed, ephemeral=True, delete_after=60)
 
 
 @division.command(name='완료', description='분배된 항목을 완료합니다')
 async def complete_division(ctx: discord.Interaction,
-                            members: Option(str, name='필터유저', description='함께 검색하고 싶은 유저를 멘션해주세요 ex. @찰봉@찰봇@붕괴의파동') = ''):
+                            members: Option(str, name='필터유저', description='함께 검색하고 싶은 유저를 멘션해주세요 ex. @꼬장@찰봉@에이렛') = ''):
     member_ids = convert_members(members, ctx.user.id)
 
-    embed, file = get_list.get_division(member_ids)
+    embed = get_list.get_division(member_ids)
     view = compete.complete(member_ids)
 
-    await ctx.respond(embed=embed, file=file, view=view, ephemeral=True, delete_after=120)
+    await ctx.respond(embed=embed, view=view, ephemeral=True, delete_after=120)
 
 
 @division.command(name='삭제', description='분배 항목을 삭제합니다')
 async def delete_division(ctx: discord.Interaction,
-                          members: Option(str, name='필터유저', description='함께 검색하고 싶은 유저를 멘션해주세요 ex. @찰봉@찰봇@붕괴의파동') = ''):
+                          members: Option(str, name='필터유저', description='함께 검색하고 싶은 유저를 멘션해주세요 ex. @꼬장@찰봉@에이렛') = ''):
     member_ids = convert_members(members, ctx.user.id)
 
-    embed, file = get_list.get_division(member_ids)
+    embed = get_list.get_division(member_ids)
     view = delete.delete(member_ids)
 
-    await ctx.respond(embed=embed, file=file, view=view, ephemeral=True, delete_after=120)
+    await ctx.respond(embed=embed, view=view, ephemeral=True, delete_after=120)
 
 
 @division.command(name='등록', description='분배 항목을 등록합니다')
 async def input_division(ctx: discord.Interaction,
                          item: Option(str, name='아이템이름', min_length=1, max_length=30, description='분배할 아이템 이름을 입력합니다. 인챈트, 강화권 아이템은 해당 단어를 포함시켜주세요 ex. 인챈트 - 가두는, 강화권 - 스매시'),
-                         members: Option(str, name='분배참여자', description='분배할 유저를 모두 멘션해주세요 ex. @찰봉@찰봇@붕괴의파동'),
-                         external_members: Option(str, name='외부인원', description='외부 인원의 닉네임을 입력해주세요. 띄어쓰기로 구분합니다. ex. 외부찰봉 외부찰봇 외부붕괴') = ''):
+                         members: Option(str, name='분배참여자', description='분배할 유저를 모두 멘션해주세요 ex. @꼬장@찰봉@에이렛 / 외부 인원의 경우 tab키를 눌러 옵션을 추가해주세요'),
+                         external_members: Option(str, name='외부인원', description='외부 인원의 닉네임을 입력해주세요. 띄어쓰기로 구분합니다. ex. 외부꼬장 외부찰봉 외부에이렛') = ''):
     external_members = convert_external_members(external_members)
     with Database() as db:
         db.update_members(external_members)

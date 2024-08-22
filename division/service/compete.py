@@ -1,7 +1,7 @@
 import discord
 from database import Database
 from division.service.distribution_status import update_distribut_status
-from item_db import get_url
+from item_db import get_emoji
 import logging
 
 MAX_VALUES = 5
@@ -31,28 +31,24 @@ class PartitionMenu(discord.ui.Select):
             embed = discord.Embed(title='분배 완료', color=0x8fce00)
             with Database() as db:
                 divisions = db.find_divisions_by_ids(divided)
-            represent_division = divisions[0]
+
             for i, division in enumerate(divisions):
-                embed.add_field(name=f'[{i + 1}] {division.item} - {division.created_at.strftime("%m/%d")}',
+                emoji = get_emoji(division.item)
+                embed.add_field(name=f'{emoji} {division.item} - {division.created_at.strftime("%m/%d")}',
                                 value=division.get_members, inline=False)
 
-            img_url = get_url(represent_division.item)
-            file = discord.File(f'static/{img_url}')
-            embed.set_thumbnail(url=f'attachment://{file.filename}')
-            await interaction.respond(embed=embed, file=file)
+            await interaction.respond(embed=embed)
 
         if len(divided) != len(division_ids):
             embed = discord.Embed(title='부분 분배 완료', color=0x8fce00)
             with Database() as db:
                 divisions = db.find_divisions_by_ids(division_ids)
-            represent_division = divisions[0]
+
             for i, division in enumerate(divisions):
-                embed.add_field(name=f'[{i + 1}] {division.item} - {division.created_at.strftime("%m/%d")}',
+                emoji = get_emoji(division.item)
+                embed.add_field(name=f'{emoji} {division.item} - {division.created_at.strftime("%m/%d")}',
                                 value=division.get_members, inline=False)
 
-            img_url = get_url(represent_division.item)
-            file = discord.File(f'static/{img_url}')
-            embed.set_thumbnail(url=f'attachment://{file.filename}')
             await interaction.respond(embed=embed, ephemeral=True, delete_after=10)
 
         await update_distribut_status(interaction.client)
@@ -81,7 +77,8 @@ def complete_partition(division_ids):
 
 class CompleteOption(discord.SelectOption):
     def __init__(self, id, item, members):
-        super().__init__(value=id, label=item, description=members)
+        emoji = get_emoji(item)
+        super().__init__(value=id, label=item, description=members, emoji=emoji)
 
 
 class CompleteMenu(discord.ui.Select):

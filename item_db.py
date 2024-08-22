@@ -48,6 +48,67 @@ db = {
     '땅콩': 'orbofgrumpykitty.png',
     '구슬': 'orbofgrumpykitty.png'
 }
+
+emoji_db = {
+    'unfinisheddesirescrownhalo': {
+        'id': 1276172128084824104,
+        'name': 'unfinisheddesirescrownhalo'
+    },
+    'swordofdawn': {
+        'id': 1276172114302468186,
+        'name': 'swordofdawn'
+    },
+    'shardofseveredwinterdream': {
+        'id': 1276172101597790289,
+        'name': 'shardofseveredwinterdream'
+    },
+    'setltemenhance': {
+        'id': 1276172086179659846,
+        'name': 'setltemenhance'
+    },
+    'orbofgrumpykitty': {
+        'id': 1276172072082739200,
+        'name': 'orbofgrumpykitty'
+    },
+    'nightbringersharpshooter': {
+        'id': 1276172052356665394,
+        'name': 'nightbringersharpshooter'
+    },
+    'miniature': {
+        'id': 1276172035470528646,
+        'name': 'miniature'
+    },
+    'heartofglasghaibhleann': {
+        'id': 1276172018450174044,
+        'name': 'heartofglasghaibhleann'
+    },
+    'fflurstears': {
+        'id': 1276172000984956948,
+        'name': 'fflurstears'
+    },
+    'enchant': {
+        'id': 1276171984040103937,
+        'name': 'enchant'
+    },
+    'damagedfeatherofglasghaibhleann': {
+        'id': 1276171958995652629,
+        'name': 'damagedfeatherofglasghaibhleann'
+    },
+    'crystalizeddebirsofwinter': {
+        'id': 1276171943820918815,
+        'name': 'crystalizeddebirsofwinter'
+    },
+    'brokenmagicalessence': {
+        'id': 1276171927257354334,
+        'name': 'brokenmagicalessence'
+    },
+    'adamantium': {
+        'id': 1276171907678605444,
+        'name': 'adamantium'
+    }
+}
+
+
 default_img = 'default.png'
 
 
@@ -67,9 +128,14 @@ def get_url(name: str):
     except KeyError:
         return default_img
 
-    # 심영 이스터에그
-    if img == 'orbofgrumpykitty.png':
-        if random.randint(1, 10) == 10:
-            img = 'goza.png'
-
     return img
+
+
+def get_emoji(item_name):
+    eng_name = get_url(item_name).removesuffix('.png')
+    try:
+        emoji = emoji_db[eng_name]
+    except KeyError:
+        return '<:null:1276173189248192603>'
+
+    return f'<:{emoji["name"]}:{emoji["id"]}>'
