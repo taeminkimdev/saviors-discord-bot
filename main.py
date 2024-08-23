@@ -115,6 +115,8 @@ async def check_valid_channel(ctx: discord.commands.context.ApplicationContext):
 async def on_application_command_error(ctx: discord.ApplicationContext, error: discord.DiscordException):
     if isinstance(error, CommandNotValidLocation):
         await ctx.respond(f"'{ctx.channel.name}' 채널은 분배 명령어를 사용할 수 없는 채널입니다", ephemeral=True, delete_after=10)
+    elif isinstance(error, discord.ext.commands.errors.MissingPermissions):
+        await ctx.respond(f"명령어를 사용할 권한이 부족합니다", ephemeral=True, delete_after=10)
     else:
         msg = f'{ctx.command.name}'
         saviors_logger.exception(msg=msg, exc_info=error)
@@ -122,6 +124,7 @@ async def on_application_command_error(ctx: discord.ApplicationContext, error: d
 
 
 @division.command(name='초기화', description='명령어를 입력할 채널 세팅을 지정합니다')
+@commands.has_permissions(administrator=True)
 async def division_init(ctx: discord.commands.context.ApplicationContext):
     with open('channel_id', 'w') as f:
         f.write(str(ctx.channel_id))
