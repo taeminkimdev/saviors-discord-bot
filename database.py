@@ -1,26 +1,21 @@
-from pymysqlpool.pool import Pool
-from pymysql.cursors import Cursor
+from pymysql import connect
 from division.dto import Division, Member
 from typing import List
 from config import mysql
 
 
-pool = Pool(host=mysql.host,
-            user=mysql.user,
-            password=mysql.password,
-            db=mysql.db,
-            cursorclass=Cursor)
-pool.init()
-
-
 class Database:
     def __enter__(self):
-        self.connection = pool.get_conn()
+        self.connection = connect(host=mysql.host,
+                                  user=mysql.user,
+                                  password=mysql.password,
+                                  database=mysql.db)
         self.cursor = self.connection.cursor()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        pool.release(self.connection)
+        self.cursor.close()
+        self.connection.close()
 
     def update_members(self, members):
         sql = """
