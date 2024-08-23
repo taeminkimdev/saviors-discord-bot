@@ -1,8 +1,16 @@
 from datetime import datetime
+from config import setting
+
+
+def convert_ggojang(user_id): # 꼬쟝 -> 꼬장 변환
+    if user_id == setting.SAVIOR_ID:
+        user_id = setting.GGO_JANG_ID
+
+    return user_id
 
 
 def convert_members(text, user_id):
-    members = [user_id]
+    members = [convert_ggojang(user_id)]
     is_id_field = False
     user_id = ''
     for c in list(text):
@@ -12,12 +20,12 @@ def convert_members(text, user_id):
 
         elif c == '>':
             is_id_field = False
-            members.append(int(user_id))
+            user_id = convert_ggojang(int(user_id))
+            members.append(user_id)
             user_id = ''
 
         if is_id_field:
             user_id += c
-
     return list(set(members))
 
 
