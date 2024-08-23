@@ -4,7 +4,7 @@ from config import setting
 from item_db import get_emoji
 
 
-async def update_distribut_status(client: discord.Client):
+async def update_distribut_status(user_id, client: discord.Client):
     channel = client.get_channel(setting.channel_id)
 
     with Database() as db:
@@ -19,7 +19,7 @@ async def update_distribut_status(client: discord.Client):
             break
         emoji = get_emoji(division.item)
         embed.add_field(name=f'{emoji} {division.item} - {division.created_at.strftime("%m/%d")}',
-                        value=division.get_members_string, inline=False)
+                        value=division.get_members_string(user_id), inline=False)
 
     try:
         with open('distribute_message_id', 'r') as f:

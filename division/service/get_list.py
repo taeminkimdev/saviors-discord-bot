@@ -3,7 +3,7 @@ from database import Database
 from item_db import get_emoji
 
 
-def get_division(member_ids):
+def get_division(user_id, member_ids):
     with Database() as db:
         divisions = db.find_divisions_by_member_ids(member_ids)
 
@@ -16,6 +16,6 @@ def get_division(member_ids):
         if i >= 25:
             break
         emoji = get_emoji(division.item)
-        embed.add_field(name=f'{emoji} {division.item} - {division.created_at.strftime("%m/%d")}', value=division.get_members_string, inline=False)
+        embed.add_field(name=f'{emoji} {division.item} - {division.created_at.strftime("%m/%d")}', value=division.get_members_string(user_id), inline=False)
 
     return embed

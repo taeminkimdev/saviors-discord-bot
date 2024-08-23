@@ -35,7 +35,7 @@ class PartitionMenu(discord.ui.Select):
             for i, division in enumerate(divisions):
                 emoji = get_emoji(division.item)
                 embed.add_field(name=f'{emoji} {division.item} - {division.created_at.strftime("%m/%d")}',
-                                value=division.get_members, inline=False)
+                                value=division.get_members(interaction.user.id), inline=False)
 
             await interaction.respond(embed=embed)
 
@@ -47,11 +47,11 @@ class PartitionMenu(discord.ui.Select):
             for i, division in enumerate(divisions):
                 emoji = get_emoji(division.item)
                 embed.add_field(name=f'{emoji} {division.item} - {division.created_at.strftime("%m/%d")}',
-                                value=division.get_members, inline=False)
+                                value=division.get_members(interaction.user.id), inline=False)
 
             await interaction.respond(embed=embed, ephemeral=True, delete_after=10)
 
-        await update_distribut_status(interaction.client)
+        await update_distribut_status(interaction.user.id, interaction.client)
 
 
 class PartitionView(discord.ui.View):
@@ -97,14 +97,14 @@ class CompleteView(discord.ui.View):
         self.add_item(select_menu)
 
 
-def complete(member_ids):
+def complete(user_id, member_ids):
     with Database() as db:
         divisions = db.find_divisions_by_member_ids(member_ids)
     options = []
     for i, division in enumerate(divisions):
         if i >= 25:
             break
-        option = CompleteOption(id=str(division.id), item=division.item, members=division.get_members)
+        option = CompleteOption(id=str(division.id), item=division.item, members=division.get_members(user_id))
         options.append(option)
 
     if len(options) == 0:

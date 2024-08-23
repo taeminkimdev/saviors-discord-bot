@@ -36,10 +36,19 @@ class Division:
     def get_item_with_division_id(self):
         return f'{self.item} #{self.id}'
 
-    @property
-    def get_members_string(self):
+    def _rearrange(self, user_id):
+        for i, member in enumerate(self.members):
+            if member.id == user_id:
+                member = self.members.pop(i)
+                self.members.insert(0, member)
+                return
+
+    def get_members_string(self, user_id):
+        self._rearrange(user_id)
+
         complete_string = ':white_check_mark: '
         not_complete_string = ':heavy_check_mark: '
+
         for i, member in enumerate(self.members):
             if member.is_divided:
                 if len(complete_string) != 19:
@@ -52,8 +61,9 @@ class Division:
 
         return f'> {not_complete_string}' if len(complete_string) == 19 else f'> {not_complete_string}\n> {complete_string}'
 
-    @property
-    def get_members(self):
+    def get_members(self, user_id):
+        self._rearrange(user_id)
+
         member_string = ''
         for i, member in enumerate(self.members):
             member_string += member.nickname

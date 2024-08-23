@@ -142,7 +142,7 @@ async def division_init(ctx: discord.commands.context.ApplicationContext):
 async def get_division_list(ctx: discord.commands.context.ApplicationContext,
                             members: Option(str, name='필터유저', description='함께 검색하고 싶은 유저를 멘션해주세요 ex. @꼬장@찰봉@에이렛') = ''):
     member_ids = convert_members(members, ctx.user.id)
-    embed = get_list.get_division(member_ids)
+    embed = get_list.get_division(ctx.user.id, member_ids)
 
     await ctx.respond(embed=embed, ephemeral=True, delete_after=60)
 
@@ -152,8 +152,8 @@ async def complete_division(ctx: discord.Interaction,
                             members: Option(str, name='필터유저', description='함께 검색하고 싶은 유저를 멘션해주세요 ex. @꼬장@찰봉@에이렛') = ''):
     member_ids = convert_members(members, ctx.user.id)
 
-    embed = get_list.get_division(member_ids)
-    view = compete.complete(member_ids)
+    embed = get_list.get_division(ctx.user.id, member_ids)
+    view = compete.complete(ctx.user.id, member_ids)
 
     await ctx.respond(embed=embed, view=view, ephemeral=True, delete_after=120)
 
@@ -163,8 +163,8 @@ async def delete_division(ctx: discord.Interaction,
                           members: Option(str, name='필터유저', description='함께 검색하고 싶은 유저를 멘션해주세요 ex. @꼬장@찰봉@에이렛') = ''):
     member_ids = convert_members(members, ctx.user.id)
 
-    embed = get_list.get_division(member_ids)
-    view = delete.delete(member_ids)
+    embed = get_list.get_division(ctx.user.id, member_ids)
+    view = delete.delete(ctx.user.id, member_ids)
 
     await ctx.respond(embed=embed, view=view, ephemeral=True, delete_after=120)
 
@@ -183,7 +183,7 @@ async def input_division(ctx: discord.Interaction,
 
     saviors_logger.info(msg=f'[분배 등록] - {ctx.user.id}/{ctx.user.name}')
     await ctx.respond(embed=embed, file=file, ephemeral=True, delete_after=10)
-    await update_distribut_status(bot)
+    await update_distribut_status(ctx.user.id, bot)
 
 
 bot.run(setting.TOKEN)

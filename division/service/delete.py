@@ -27,7 +27,7 @@ class DeleteMenu(discord.ui.Select):
 
         saviors_logger.info(msg=f'[분배 삭제] - {interaction.user.id}/{interaction.user.name} / division_ids : {division_ids}')
 
-        await update_distribut_status(interaction.client)
+        await update_distribut_status(interaction.user.id, interaction.client)
         await interaction.respond(embed=embed, ephemeral=True, delete_after=10)
 
 
@@ -37,7 +37,7 @@ class DeleteView(discord.ui.View):
         self.add_item(select_menu)
 
 
-def delete(member_ids):
+def delete(user_id, member_ids):
     with Database() as db:
         divisions = db.find_divisions_by_member_ids(member_ids)
 
@@ -45,7 +45,7 @@ def delete(member_ids):
     for i, division in enumerate(divisions):
         if i >= 25:
             break
-        option = DeleteOption(id=str(division.id), item=division.item, members=division.get_members)
+        option = DeleteOption(id=str(division.id), item=division.item, members=division.get_members(user_id))
         options.append(option)
 
     if len(options) == 0:
