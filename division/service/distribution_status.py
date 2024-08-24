@@ -1,7 +1,7 @@
-from database import Database
+from division.database import Database
 import discord
-from config import setting
-from item_db import get_emoji
+from division.config import setting
+from division.item_db import get_emoji
 
 
 async def update_distribut_status(user_id, client: discord.Client):
@@ -22,7 +22,7 @@ async def update_distribut_status(user_id, client: discord.Client):
                         value=division.get_members_string(user_id), inline=False)
 
     try:
-        with open('distribute_message_id', 'r') as f:
+        with open('local/distribute_message_id', 'r') as f:
             message_id = int(f.readline().strip())
     except FileNotFoundError:
         pass
@@ -31,5 +31,5 @@ async def update_distribut_status(user_id, client: discord.Client):
         await message.delete()
 
     message = await channel.send(embed=embed)
-    with open('distribute_message_id', 'w') as f:
+    with open('local/distribute_message_id', 'w') as f:
         f.write(str(message.id))

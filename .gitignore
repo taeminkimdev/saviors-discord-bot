@@ -92,9 +92,8 @@ fabric.properties
 # End of https://www.toptal.com/developers/gitignore/api/pycharm+all
 
 config/
-distribute_message_id
-channel_id
 Pipfile.lock
 log/
+local/
 *.pyc
 __pycache__/

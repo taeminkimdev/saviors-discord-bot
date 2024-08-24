@@ -1,7 +1,7 @@
 import discord
-from database import Database
+from division.database import Database
 from division.service.distribution_status import update_distribut_status
-from item_db import get_emoji
+from division.item_db import get_emoji
 import logging
 
 MAX_VALUES = 5

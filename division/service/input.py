@@ -1,8 +1,8 @@
 import discord
 from datetime import datetime
-from util import create_id
-from item_db import get_url
-from database import Database
+from division.util import create_id
+from division.item_db import get_url
+from division.database import Database
 
 
 def input_division(item, members):

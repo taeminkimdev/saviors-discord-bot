@@ -1,6 +1,6 @@
 import discord
-from database import Database
-from item_db import get_emoji
+from division.database import Database
+from division.item_db import get_emoji
 
 
 def get_division(user_id, member_ids):

@@ -2,9 +2,8 @@ import discord
 import os
 from discord.commands.options import Option
 from discord.ext import commands
-from database import Database
+from division.database import Database
 from config import setting
-from item_db import emoji_db
 from util import convert_members, convert_external_members
 from division.service import compete, delete, get_list, input
 from division.service.distribution_status import update_distribut_status
@@ -85,15 +84,6 @@ async def on_message(message: discord.Message):
     if message.channel.id == setting.channel_id and not message.author.bot:
         await message.delete()
 
-    elif '끼얏호우' in message.content:  # 이스터에그
-        file = discord.File(f'static/kkiyathou.png')
-        await message.channel.send(file=file)
-
-    elif '렛렝' == message.content:
-        await message.channel.send("'렛렝'님은 '에이렛'님의 부캐릭터 '소생의찬가'의 전 닉네임이에요. 정말 독특하고 멋진 닉네임이네요!")
-
-    elif '위하임' == message.content:
-        await message.channel.send("我是魏海姆!")
 
 division = bot.create_group(name='분배', description='분배합니다')
 
@@ -126,11 +116,11 @@ async def on_application_command_error(ctx: discord.ApplicationContext, error: d
 @division.command(name='초기화', description='명령어를 입력할 채널 세팅을 지정합니다')
 @commands.has_permissions(administrator=True)
 async def division_init(ctx: discord.commands.context.ApplicationContext):
-    with open('channel_id', 'w') as f:
+    with open('local/channel_id', 'w') as f:
         f.write(str(ctx.channel_id))
 
     try:
-        os.remove('distribute_message_id')
+        os.remove('local/distribute_message_id')
     except FileNotFoundError:
         pass
 
