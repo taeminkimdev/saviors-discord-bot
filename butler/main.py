@@ -15,7 +15,7 @@ async def on_message(message: discord.Message):
         await message.channel.send(file=file)
 
     elif '렛렝' == message.content:
-        await message.channel.send("'렛렝'님은 '에이렛'님의 부캐릭터 '소생의찬가'의 전 닉네임이에요. 정말 독특하고 멋진 닉네임이네요!")
+        await message.channel.send("'렛렝'님은 '에이렛'님의 부캐릭터 '소생의찬가'의 전 닉네임이에요. 야레야레 정말 못말리는 아가씨인걸요?")
 
     elif '위하임' == message.content:
         await message.channel.send("我是魏海姆!")
