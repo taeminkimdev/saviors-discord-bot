@@ -29,7 +29,7 @@ class HelpView(discord.ui.View):
 
 def bot_help():
     options = [
-        HelpOption(id='division', command='분배봇', description='길드 내 분배 항목을 관리하는 봇'),
+        HelpOption(id='division', command='분배봇', description='분배 항목을 관리하는 봇'),
         HelpOption(id='song', command='노래봇', description='노래를 재생하는 봇')
     ]
 

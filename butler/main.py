@@ -5,7 +5,7 @@ from butler.service import help
 
 intents = discord.Intents.all()
 
-bot = discord.Bot(intents=intents, activity=discord.Game(name='섬멸자 여신님을 보좌'))
+bot = discord.Bot(intents=intents, activity=discord.Game(name='아가씨께 디코를 안내'))
 
 
 @bot.event
